@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Struk Pembelian</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: url("{{ url_for('static', filename='img/bg-menu.jpg') }}") no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+    .overlay {
+      background: rgba(0,0,0,0.85);
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: -1;
+    }
+    .struk-card {
+      background: rgba(255,255,255,0.08);
+      border-radius: 15px;
+      padding: 25px;
+      margin-top: 40px;
+      text-align: center;
+    }
+    .btn-gold {
+      background: #c49b63;
+      color: #fff;
+      border-radius: 20px;
+      padding: 8px 20px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="struk-card">
+      <h2>Struk Pembelian</h2>
+
+      <p><strong>Nama:</strong> {{ r["name"]|default("Tidak ada") }}</p>
+      <p><strong>Nomor WA:</strong> {{ r["whatsapp"]|default("-") }}</p>
+      <p><strong>Tanggal:</strong> {{ r["created_at"]|default("-") }}</p>
+      <p><strong>Status Member:</strong> {{ "Ya" if r["is_member"] else "Tidak" }}</p>
+      <p><strong>Hari:</strong> {{ r["day"]|default("-") }}</p>
+
+      <h5 class="mt-4">Pesanan:</h5>
+      <ul class="list-group mb-3">
+        {% for item in r["cart"]|default([]) %}
+        <li class="list-group-item bg-transparent text-white d-flex justify-content-between">
+          <span>{{ item["name"]|default("Menu") }} (x{{ item["qty"]|default(0) }})</span>
+          <strong>Rp {{ (item["price"]|default(0) * item["qty"]|default(0))|int }}</strong>
+        </li>
+        {% else %}
+        <li class="list-group-item bg-transparent text-white text-center">
+          Tidak ada pesanan
+        </li>
+        {% endfor %}
+      </ul>
+
+      <p><strong>Subtotal:</strong> Rp {{ r["subtotal"]|default(0)|int }}</p>
+
+      {% for d in r["discounts"]|default([]) %}
+        <p>{{ d[0] }}: -Rp {{ d[1]|default(0)|int }}</p>
+      {% endfor %}
+
+      <p><strong>Total Akhir:</strong> Rp {{ r["total"]|default(0)|int }}</p>
+
+      <a href="{{ url_for('main') }}" class="btn btn-gold mt-3">Kembali ke Menu</a>
+    </div>
+  </div>
+</body>
+</html>
